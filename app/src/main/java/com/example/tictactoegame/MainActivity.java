@@ -1,13 +1,18 @@
 package com.example.tictactoegame;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 
@@ -16,15 +21,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     int x=1;
     String winner="";
     int win=0;
+    int counter = 0;
     int[][] win_state={{0,1,2},{3,4,5},{6,7,8},{0,4,8},{2,4,6},{0,3,6},{1,4,7},{2,5,8}};
     int[] game_state={2,2,2,2,2,2,2,2,2};
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    Uri currentPhoto1;
+    Uri currentPhoto2;
+    String currentPlayer;
     public void play(View view)
     {
         winner="";
@@ -77,68 +89,71 @@ public class MainActivity extends AppCompatActivity {
         //X=0; O=1; Empty=2;
         ImageView c = (ImageView) view;
 
-        int t=Integer.parseInt(c.getTag().toString());
-        int a,b,d;
+        if(currentPhoto1 == null || currentPhoto2 == null){
+            Toast.makeText(getApplicationContext(), "Fotos antes", Toast.LENGTH_SHORT).show();
+        }else{
+            int t=Integer.parseInt(c.getTag().toString());
+            int a,b,d;
 
-        if (x==1 && game_state[t]==2) {
-            c.setImageResource(R.drawable.xxx);
-            c.animate().alpha(1).setDuration(500);
-            x=0;
-            game_state[t]=0;
-        }
-        else if(x==0 && game_state[t]==2)
-        {
-            c.setImageResource(R.drawable.ooo);
-            c.animate().alpha(1).setDuration(500);
-            x=1;
-            game_state[t]=1;
-        }
-        else if(game_state[t]==3)
-        {
-            Toast.makeText(this, "Fim! Jogue novamente!", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            Toast.makeText(this, "Caixa ocupada! Tente outra!", Toast.LENGTH_SHORT).show();
-        }
-        Log.i("state", Arrays.toString(game_state));
-
-        for(int i=0;i<8;i++)
-        {
-            a=win_state[i][0];
-            b=win_state[i][1];
-            d=win_state[i][2];
-            if((game_state[a]==0 && game_state[b]==0 && game_state[d]==0) || (game_state[a]==1 && game_state[b]==1 && game_state[d]==1))
+            if (x==1 && game_state[t]==2) {
+                c.setImageURI(currentPhoto1);
+                c.animate().alpha(1).setDuration(500);
+                x=0;
+                game_state[t]=0;
+            }
+            else if(x==0 && game_state[t]==2)
             {
-                if (game_state[a]==0) {
-                    winner="Player 1";
-                }
-                else{
-                    winner="Player 2";
-                }
-                for(int j=0;j<9;j++)
+                c.setImageURI(currentPhoto2);
+                c.animate().alpha(1).setDuration(500);
+                x=1;
+                game_state[t]=1;
+            }
+            else if(game_state[t]==3)
+            {
+                Toast.makeText(this, "Fim! Jogue novamente!", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(this, "Caixa ocupada! Tente outra!", Toast.LENGTH_SHORT).show();
+            }
+            Log.i("state", Arrays.toString(game_state));
+
+            for(int i=0;i<8;i++)
+            {
+                a=win_state[i][0];
+                b=win_state[i][1];
+                d=win_state[i][2];
+                if((game_state[a]==0 && game_state[b]==0 && game_state[d]==0) || (game_state[a]==1 && game_state[b]==1 && game_state[d]==1))
                 {
-                    game_state[j]=3;
+                    if (game_state[a]==0) {
+                        winner="Player 1";
+                    }
+                    else{
+                        winner="Player 2";
+                    }
+                    for(int j=0;j<9;j++)
+                    {
+                        game_state[j]=3;
+                    }
+                    win=1;
+                    Button button=(Button) findViewById(R.id.button2);
+                    TextView te=(TextView) findViewById(R.id.textView4);
+                    button.setVisibility(View.VISIBLE);
+                    winner=winner+" venceu";
+                    te.setText(winner);
+                    te.setVisibility(View.VISIBLE);
                 }
-                win=1;
-                Button button=(Button) findViewById(R.id.button2);
-                TextView te=(TextView) findViewById(R.id.textView4);
-                button.setVisibility(View.VISIBLE);
-                winner=winner+" has won";
-                te.setText(winner);
-                te.setVisibility(View.VISIBLE);
-            }
-            if(draw()==true && win==0)
-            {
-                Button button=(Button) findViewById(R.id.button2);
-                TextView te=(TextView) findViewById(R.id.textView4);
-                button.setVisibility(View.VISIBLE);
-                winner="Empate! Jogue novamente!";
-                te.setText(winner);
-                te.setVisibility(View.VISIBLE);
+                if(draw()==true && win==0)
+                {
+                    Button button=(Button) findViewById(R.id.button2);
+                    TextView te=(TextView) findViewById(R.id.textView4);
+                    button.setVisibility(View.VISIBLE);
+                    winner="Empate! Jogue novamente!";
+                    te.setText(winner);
+                    te.setVisibility(View.VISIBLE);
+                }
             }
         }
-
     }
 
 
@@ -149,23 +164,42 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void dispatchTakePictureIntent(View view) throws IOException {
+        currentPlayer = view.getResources().getResourceName(view.getId());
 
-    public void dispatchTakePictureIntent(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            ImageButton photoButton = (ImageButton) this.findViewById(R.id.imageButton);
-            photoButton.setImageBitmap(imageBitmap);
+            if (currentPhoto1 == null){
+                currentPhoto1 = getImageUri(getApplicationContext(), imageBitmap);
+                ImageButton photoButton = (ImageButton) this.findViewById(R.id.imageButton);
+                photoButton.setImageBitmap(imageBitmap);
+            }else{
+                currentPhoto2 = getImageUri(getApplicationContext(), imageBitmap);
+                ImageButton photoButton = (ImageButton) this.findViewById(R.id.imageButton2);
+                photoButton.setImageBitmap(imageBitmap);
+            }
+
         }
     }
 
