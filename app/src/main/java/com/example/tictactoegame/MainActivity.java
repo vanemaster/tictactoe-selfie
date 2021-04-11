@@ -3,12 +3,15 @@ package com.example.tictactoegame;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     int win=0;
     int[][] win_state={{0,1,2},{3,4,5},{6,7,8},{0,4,8},{2,4,6},{0,3,6},{1,4,7},{2,5,8}};
     int[] game_state={2,2,2,2,2,2,2,2,2};
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     public void play(View view)
     {
         winner="";
@@ -67,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return d;
     }
+
     public void click(View view)
     {
         //X=0; O=1; Empty=2;
         ImageView c = (ImageView) view;
+
         int t=Integer.parseInt(c.getTag().toString());
         int a,b,d;
 
@@ -89,11 +95,11 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(game_state[t]==3)
         {
-            Toast.makeText(this, "Game over. Play Again!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Fim! Jogue novamente!", Toast.LENGTH_SHORT).show();
         }
         else
         {
-            Toast.makeText(this, "Space Full! Try Another Box!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Caixa ocupada! Tente outra!", Toast.LENGTH_SHORT).show();
         }
         Log.i("state", Arrays.toString(game_state));
 
@@ -127,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 Button button=(Button) findViewById(R.id.button2);
                 TextView te=(TextView) findViewById(R.id.textView4);
                 button.setVisibility(View.VISIBLE);
-                winner="DRAW! Play Again!";
+                winner="Empate! Jogue novamente!";
                 te.setText(winner);
                 te.setVisibility(View.VISIBLE);
             }
@@ -140,5 +146,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
+
+
+    public void dispatchTakePictureIntent(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            ImageButton photoButton = (ImageButton) this.findViewById(R.id.imageButton);
+            photoButton.setImageBitmap(imageBitmap);
+        }
+    }
+
 }
