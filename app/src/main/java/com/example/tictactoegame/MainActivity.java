@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     int x=1;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     Uri firstPlayerPicture;
     Uri secondPlayerPicture;
     int currentID;
+    static Date currentTime;
     public void play(View view)
     {
         winner="";
@@ -182,11 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 firstPlayerPicture = currentPhoto2;
                 secondPlayerPicture = currentPhoto1;
             }
-
-            Log.i("button_click",currentPlayer);
-
-//            Log.i("currentPlayerPicture", String.valueOf(currentPlayerPicture));
-//            Log.i("currentPlayerPicture", String.valueOf(currentPlayerPicture==2));
         }
 
         currentID = view.getId();
@@ -202,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "ThisIsImageTitleString" + " - " + (currentTime = Calendar.getInstance().getTime()), null);
         return Uri.parse(path);
     }
 
@@ -214,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            if (currentPhoto1 == null){
+            if ((int)currentID == 2131165295){
                 currentPhoto1 = getImageUri(getApplicationContext(), imageBitmap);
             }else{
                 currentPhoto2 = getImageUri(getApplicationContext(), imageBitmap);
