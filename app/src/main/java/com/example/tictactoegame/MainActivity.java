@@ -1,7 +1,6 @@
 package com.example.tictactoegame;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 
 import android.content.Context;
@@ -9,10 +8,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,21 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     int x=1;
     String winner="";
     int win=0;
-    int counter = 0;
     int[][] win_state={{0,1,2},{3,4,5},{6,7,8},{0,4,8},{2,4,6},{0,3,6},{1,4,7},{2,5,8}};
     int[] game_state={2,2,2,2,2,2,2,2,2};
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     Uri currentPhoto1;
     Uri currentPhoto2;
-    String currentPlayer;
+    String currentPlayer = "";
+    Uri firstPlayerPicture;
+    Uri secondPlayerPicture;
+    int currentID;
     public void play(View view)
     {
         winner="";
@@ -90,24 +87,32 @@ public class MainActivity extends AppCompatActivity {
         ImageView c = (ImageView) view;
 
         if(currentPhoto1 == null || currentPhoto2 == null){
-            Toast.makeText(getApplicationContext(), "Fotos antes", Toast.LENGTH_SHORT).show();
-        }else{
+            Toast.makeText(getApplicationContext(), "Tire as selfies antes!", Toast.LENGTH_SHORT).show();
+        }else if (currentPlayer == ""){
+            Toast.makeText(getApplicationContext(), "Quem começa? Clique na sua foto para definir.", Toast.LENGTH_SHORT).show();
+        }else if (currentPhoto1 != null && currentPhoto2 != null && currentPlayer != ""){
             int t=Integer.parseInt(c.getTag().toString());
             int a,b,d;
 
+//          Player 1
             if (x==1 && game_state[t]==2) {
-                c.setImageURI(currentPhoto1);
+
+                c.setImageURI(firstPlayerPicture);
+                Log.i("Player 1", String.valueOf(1));
                 c.animate().alpha(1).setDuration(500);
                 x=0;
                 game_state[t]=0;
             }
+//          Player 2
             else if(x==0 && game_state[t]==2)
             {
-                c.setImageURI(currentPhoto2);
+                c.setImageURI(secondPlayerPicture);
+                Log.i("Player 2", String.valueOf(2));
                 c.animate().alpha(1).setDuration(500);
                 x=1;
                 game_state[t]=1;
             }
+
             else if(game_state[t]==3)
             {
                 Toast.makeText(this, "Fim! Jogue novamente!", Toast.LENGTH_SHORT).show();
@@ -143,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                     te.setText(winner);
                     te.setVisibility(View.VISIBLE);
                 }
-                if(draw()==true && win==0)
+                if(draw() && win==0)
                 {
                     Button button=(Button) findViewById(R.id.button2);
                     TextView te=(TextView) findViewById(R.id.textView4);
@@ -161,12 +166,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
-    public void dispatchTakePictureIntent(View view) throws IOException {
-        currentPlayer = view.getResources().getResourceName(view.getId());
+    public void getFirstPlayer(View view){
+        if(currentPhoto1 == null || currentPhoto2 == null){
+            dispatchTakePictureIntent();
+        }else{
+            currentPlayer = view.getResources().getResourceEntryName(view.getId());
 
+            if(currentPlayer.equals("imageButton")){
+                firstPlayerPicture = currentPhoto1;
+                secondPlayerPicture = currentPhoto2;
+            }
+            if(currentPlayer.equals("imageButton2")){
+                firstPlayerPicture = currentPhoto2;
+                secondPlayerPicture = currentPhoto1;
+            }
+
+            Log.i("button_click",currentPlayer);
+
+//            Log.i("currentPlayerPicture", String.valueOf(currentPlayerPicture));
+//            Log.i("currentPlayerPicture", String.valueOf(currentPlayerPicture==2));
+        }
+
+        currentID = view.getId();
+    }
+
+    public void dispatchTakePictureIntent(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -180,8 +206,6 @@ public class MainActivity extends AppCompatActivity {
         return Uri.parse(path);
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -192,13 +216,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (currentPhoto1 == null){
                 currentPhoto1 = getImageUri(getApplicationContext(), imageBitmap);
-                ImageButton photoButton = (ImageButton) this.findViewById(R.id.imageButton);
-                photoButton.setImageBitmap(imageBitmap);
             }else{
                 currentPhoto2 = getImageUri(getApplicationContext(), imageBitmap);
-                ImageButton photoButton = (ImageButton) this.findViewById(R.id.imageButton2);
-                photoButton.setImageBitmap(imageBitmap);
             }
+
+            ImageButton photoButton = (ImageButton) this.findViewById(currentID);
+            photoButton.setImageBitmap(imageBitmap);
 
         }
     }

@@ -171,7 +171,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="124dp"
         android:text="Player 1"
-        android:onClick="dispatchTakePictureIntent"
+        android:onClick="getFirstPlayer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
@@ -184,7 +184,7 @@
         android:layout_marginLeft="136dp"
         android:layout_marginTop="124dp"
         android:text="Player 2"
-        android:onClick="dispatchTakePictureIntent"
+        android:onClick="getFirstPlayer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
