@@ -42,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
         winner="";
         win=0;
         x=1;
+        currentPhoto1 = null;
+        firstPlayerPicture = null;
+        currentPhoto2 = null;
+        secondPlayerPicture = null;
+        currentID = 0;
+        currentPlayer = "";
+        ImageButton photoButton1 = (ImageButton) this.findViewById(R.id.imageButton);
+        photoButton1.setImageBitmap(null);
+        ImageButton photoButton2 = (ImageButton) this.findViewById(R.id.imageButton2);
+        photoButton2.setImageBitmap(null);
         Button button=(Button) findViewById(R.id.button2);
         TextView te=(TextView) findViewById(R.id.textView4);
         button.setVisibility(View.INVISIBLE);
@@ -99,9 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
 //          Player 1
             if (x==1 && game_state[t]==2) {
-
                 c.setImageURI(firstPlayerPicture);
-                Log.i("Player 1", String.valueOf(1));
                 c.animate().alpha(1).setDuration(500);
                 x=0;
                 game_state[t]=0;
@@ -110,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
             else if(x==0 && game_state[t]==2)
             {
                 c.setImageURI(secondPlayerPicture);
-                Log.i("Player 2", String.valueOf(2));
                 c.animate().alpha(1).setDuration(500);
                 x=1;
                 game_state[t]=1;
@@ -174,7 +181,8 @@ public class MainActivity extends AppCompatActivity {
     public void getFirstPlayer(View view){
         if(currentPhoto1 == null || currentPhoto2 == null){
             dispatchTakePictureIntent();
-        }else{
+        }
+        else{
             currentPlayer = view.getResources().getResourceEntryName(view.getId());
 
             if(currentPlayer.equals("imageButton")){
@@ -212,12 +220,13 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            if ((int)currentID == 2131165295){
+            if((int)currentID == 2131165295){
                 currentPhoto1 = getImageUri(getApplicationContext(), imageBitmap);
-            }else{
+            }
+            if((int)currentID == 2131165296){
                 currentPhoto2 = getImageUri(getApplicationContext(), imageBitmap);
             }
-
+            
             ImageButton photoButton = (ImageButton) this.findViewById(currentID);
             photoButton.setImageBitmap(imageBitmap);
 
