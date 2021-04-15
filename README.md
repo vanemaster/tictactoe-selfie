@@ -1,4 +1,5 @@
-# Tic-Tac-Toe-Game-Android-
-A simple Tic-Tac-Toe Game made with Java in Android Studio.
-Will run on all versions of Android, on or above Android 4.1.1(JellyBean). 
-Uses API 29.
+# Jogo da Velha - Selfie!
+
+Um simples jogo da velha onde no lugar de X e O nós usamos sua selfie :)
+
+Feito em Java e Android Studio
