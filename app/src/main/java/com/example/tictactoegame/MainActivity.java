@@ -50,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         currentPlayer = "";
         ImageButton photoButton1 = (ImageButton) this.findViewById(R.id.imageButton);
         photoButton1.setImageBitmap(null);
+        photoButton1.setBackgroundResource(R.drawable.player1);
         ImageButton photoButton2 = (ImageButton) this.findViewById(R.id.imageButton2);
         photoButton2.setImageBitmap(null);
+        photoButton2.setBackgroundResource(R.drawable.player2);
         Button button=(Button) findViewById(R.id.button2);
         TextView te=(TextView) findViewById(R.id.textView4);
         //button.setVisibility(View.INVISIBLE);
@@ -226,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             if((int)currentID == 2131165296){
                 currentPhoto2 = getImageUri(getApplicationContext(), imageBitmap);
             }
-            
+
             ImageButton photoButton = (ImageButton) this.findViewById(currentID);
             photoButton.setImageBitmap(imageBitmap);
 
