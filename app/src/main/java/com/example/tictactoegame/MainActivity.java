@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         photoButton2.setImageBitmap(null);
         Button button=(Button) findViewById(R.id.button2);
         TextView te=(TextView) findViewById(R.id.textView4);
-        button.setVisibility(View.INVISIBLE);
+        //button.setVisibility(View.INVISIBLE);
         te.setVisibility(View.INVISIBLE);
         ImageView i1=(ImageView) findViewById(R.id.imageView1);
         ImageView i2=(ImageView) findViewById(R.id.imageView2);
