@@ -22,11 +22,14 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     int x=1;
     String winner="";
+    String winner_text="";
     int win=0;
+    int whoStarted=0;
     int[][] win_state={{0,1,2},{3,4,5},{6,7,8},{0,4,8},{2,4,6},{0,3,6},{1,4,7},{2,5,8}};
     int[] game_state={2,2,2,2,2,2,2,2,2};
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -40,20 +43,26 @@ public class MainActivity extends AppCompatActivity {
     public void play(View view)
     {
         winner="";
+        winner_text="";
         win=0;
         x=1;
         currentPhoto1 = null;
         firstPlayerPicture = null;
         currentPhoto2 = null;
         secondPlayerPicture = null;
+        whoStarted = 0;
         currentID = 0;
         currentPlayer = "";
         ImageButton photoButton1 = (ImageButton) this.findViewById(R.id.imageButton);
         photoButton1.setImageBitmap(null);
         photoButton1.setBackgroundResource(R.drawable.player1);
+        photoButton1.setRotation(0);
         ImageButton photoButton2 = (ImageButton) this.findViewById(R.id.imageButton2);
         photoButton2.setImageBitmap(null);
         photoButton2.setBackgroundResource(R.drawable.player2);
+        photoButton2.setRotation(0);
+        ImageView winner_pic=(ImageView) findViewById(R.id.imageView999);
+        winner_pic.setVisibility(View.INVISIBLE);
         Button button=(Button) findViewById(R.id.button2);
         TextView te=(TextView) findViewById(R.id.textView4);
         //button.setVisibility(View.INVISIBLE);
@@ -85,10 +94,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean draw()
     {
         boolean d=true;
-        for(int i=0;i<9;i++)
-        {
-            if(game_state[i]==2)
-            {
+
+        for(int i=0;i<9;i++){
+            if(game_state[i]==2){
                 d=false;
                 break;
             }
@@ -112,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 //          Player 1
             if (x==1 && game_state[t]==2) {
                 c.setImageURI(firstPlayerPicture);
+                c.setRotation(90);
                 c.animate().alpha(1).setDuration(500);
                 x=0;
                 game_state[t]=0;
@@ -121,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 c.setImageURI(secondPlayerPicture);
                 c.animate().alpha(1).setDuration(500);
+                c.setRotation(90);
                 x=1;
                 game_state[t]=1;
             }
@@ -131,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else
             {
-                Toast.makeText(this, "Caixa ocupada! Tente outra!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Espaço ocupado! Tente outra!", Toast.LENGTH_SHORT).show();
             }
             Log.i("state", Arrays.toString(game_state));
 
@@ -140,25 +150,44 @@ public class MainActivity extends AppCompatActivity {
                 a=win_state[i][0];
                 b=win_state[i][1];
                 d=win_state[i][2];
+
                 if((game_state[a]==0 && game_state[b]==0 && game_state[d]==0) || (game_state[a]==1 && game_state[b]==1 && game_state[d]==1))
                 {
                     if (game_state[a]==0) {
-                        winner="Player 1";
+                        winner="Player " + whoStarted;
                     }
                     else{
-                        winner="Player 2";
+                        if(whoStarted==1){
+                            winner="Player 2";
+                        }else{
+                            winner="Player 1";
+                        }
                     }
-                    for(int j=0;j<9;j++)
-                    {
+
+                    for(int j=0;j<9;j++){
                         game_state[j]=3;
                     }
+
                     win=1;
+
                     Button button=(Button) findViewById(R.id.button2);
                     TextView te=(TextView) findViewById(R.id.textView4);
                     button.setVisibility(View.VISIBLE);
-                    winner=winner+" venceu";
-                    te.setText(winner);
+
+                    winner_text = winner + " venceu";
+                    te.setText(winner_text);
                     te.setVisibility(View.VISIBLE);
+                    ImageView winner_pic=(ImageView) findViewById(R.id.imageView999);
+
+                    Log.i("winner", winner);
+
+                    if(winner.equals("Player 1")){
+                        winner_pic.setImageURI(currentPhoto1);
+                    }else{
+                        winner_pic.setImageURI(currentPhoto2);
+                    }
+                    winner_pic.setRotation(90);
+                    winner_pic.setVisibility(View.VISIBLE);
                 }
                 if(draw() && win==0)
                 {
@@ -181,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getFirstPlayer(View view){
+
+
         if(currentPhoto1 == null || currentPhoto2 == null){
             dispatchTakePictureIntent();
         }
@@ -190,10 +221,12 @@ public class MainActivity extends AppCompatActivity {
             if(currentPlayer.equals("imageButton")){
                 firstPlayerPicture = currentPhoto1;
                 secondPlayerPicture = currentPhoto2;
+                whoStarted = 1;
             }
             if(currentPlayer.equals("imageButton2")){
                 firstPlayerPicture = currentPhoto2;
                 secondPlayerPicture = currentPhoto1;
+                whoStarted = 2;
             }
         }
 
@@ -231,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
             ImageButton photoButton = (ImageButton) this.findViewById(currentID);
             photoButton.setImageBitmap(imageBitmap);
+            photoButton.setRotation(90);
 
         }
     }
