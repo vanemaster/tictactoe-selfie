@@ -56,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
         ImageButton photoButton1 = (ImageButton) this.findViewById(R.id.imageButton);
         photoButton1.setImageBitmap(null);
         photoButton1.setBackgroundResource(R.drawable.player1);
-        photoButton1.setRotation(0);
+//        photoButton1.setRotation(0);
         ImageButton photoButton2 = (ImageButton) this.findViewById(R.id.imageButton2);
         photoButton2.setImageBitmap(null);
         photoButton2.setBackgroundResource(R.drawable.player2);
-        photoButton2.setRotation(0);
+//        photoButton2.setRotation(0);
         ImageView winner_pic=(ImageView) findViewById(R.id.imageView999);
         winner_pic.setVisibility(View.INVISIBLE);
         Button button=(Button) findViewById(R.id.button2);
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 //          Player 1
             if (x==1 && game_state[t]==2) {
                 c.setImageURI(firstPlayerPicture);
-                c.setRotation(90);
+//                c.setRotation(90);
                 c.animate().alpha(1).setDuration(500);
                 x=0;
                 game_state[t]=0;
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 c.setImageURI(secondPlayerPicture);
                 c.animate().alpha(1).setDuration(500);
-                c.setRotation(90);
+//                c.setRotation(90);
                 x=1;
                 game_state[t]=1;
             }
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         winner_pic.setImageURI(currentPhoto2);
                     }
-                    winner_pic.setRotation(90);
+//                    winner_pic.setRotation(90);
                     winner_pic.setVisibility(View.VISIBLE);
                 }
                 if(draw() && win==0)
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
             ImageButton photoButton = (ImageButton) this.findViewById(currentID);
             photoButton.setImageBitmap(imageBitmap);
-            photoButton.setRotation(90);
+//            photoButton.setRotation(90);
 
         }
     }
