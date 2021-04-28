@@ -225,6 +225,7 @@
         android:layout_width="281dp"
         android:layout_height="281dp"
         android:layout_marginTop="200dp"
+        android:scaleType="fitXY"
         android:src="@drawable/xxx"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
